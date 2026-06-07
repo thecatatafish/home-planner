@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% set active = "shopping" %}
+
+{% block title %}Shopping List — Home Planner{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Shopping List</h1>
+  <button onclick="window.print()" class="btn btn-ghost no-print">🖨 Print</button>
+</div>
+
+<div class="week-nav no-print">
+  <a href="/shopping-list?week={{ prev_week }}" class="btn btn-ghost btn-sm">← Prev week</a>
+  <h2>
+    {{ week_start.strftime('%B %d') }} – {{ week_end.strftime('%B %d, %Y') }}
+  </h2>
+  <a href="/shopping-list?week={{ next_week }}" class="btn btn-ghost btn-sm">Next week →</a>
+</div>
+
+{% if has_items %}
+<div class="shopping-card">
+  <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem">
+    Check off items as you shop. {{ sorted_ingredients|length }} ingredient{% if sorted_ingredients|length != 1 %}s{% endif %} from this week's meals.
+  </p>
+
+  {% for key, items in sorted_ingredients %}
+  <div class="shopping-group">
+    {% for item in items %}
+    {% set item_id = loop.index0|string + '-' + key|replace(' ', '-') %}
+    <div class="shopping-item">
+      <input type="checkbox" id="chk-{{ item_id }}"
+             onchange="this.nextElementSibling.classList.toggle('checked', this.checked)">
+      <label for="chk-{{ item_id }}" class="shopping-label">
+        {% if item.quantity or item.unit %}
+        <span class="ing-qty-text">{{ item.quantity }}{% if item.unit %} {{ item.unit }}{% endif %}</span>
+        {% endif %}
+        {{ item.name }}
+        <span class="ing-recipe-tag">{{ item.recipe }}</span>
+      </label>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">🛒</div>
+  <p>No meals planned for this week yet.</p>
+  <a href="/planner?week={{ week_str }}" class="btn btn-primary">Go to planner</a>
+</div>
+{% endif %}
+{% endblock %}

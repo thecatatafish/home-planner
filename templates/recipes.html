@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% set active = "recipes" %}
+
+{% block title %}Recipes — Home Planner{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Recipes</h1>
+  <a href="/recipes/new" class="btn btn-primary">+ Add Recipe</a>
+</div>
+
+{% if recipes %}
+<div class="recipes-grid">
+  {% for recipe in recipes %}
+  <a href="/recipes/{{ recipe.id }}" class="recipe-card">
+    {% if recipe.photo_filename %}
+    <img src="/static/uploads/{{ recipe.photo_filename }}" class="recipe-card-thumb" alt="{{ recipe.name }}">
+    {% else %}
+    <div class="recipe-card-thumb-placeholder">🍽️</div>
+    {% endif %}
+    <div class="recipe-card-body">
+      <div class="recipe-card-name">{{ recipe.name }}</div>
+      <div class="recipe-card-meta">
+        {{ recipe.ingredient_count }} ingredient{% if recipe.ingredient_count != 1 %}s{% endif %}
+      </div>
+      {% if recipe.description %}
+      <div class="recipe-card-meta" style="margin-top:0.25rem">{{ recipe.description[:80] }}{% if recipe.description|length > 80 %}…{% endif %}</div>
+      {% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">🥣</div>
+  <p>No recipes yet. Add your first one!</p>
+  <a href="/recipes/new" class="btn btn-primary">+ Add Recipe</a>
+</div>
+{% endif %}
+{% endblock %}

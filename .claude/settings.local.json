@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv add *)",
+      "Bash(uv run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/planner)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/recipes)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/shopping-list)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/htmx/ingredient-row)",
+      "Bash(curl -s http://localhost:8000/planner)",
+      "Bash(curl -s http://localhost:8001/planner)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/recipes/new)",
+      "Bash(curl -s \"http://localhost:8000/htmx/ingredient-suggestions?q=tom\")",
+      "Bash(curl -s \"http://localhost:8000/htmx/ingredient-suggestions?q=xyz\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:8000/recipes/new\")",
+      "Bash(curl -s \"http://localhost:8000/htmx/ingredient-suggestions?q=chi\")",
+      "Bash(curl *)",
+      "Bash(kill %2)"
+    ]
+  }
+}

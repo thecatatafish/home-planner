@@ -1,0 +1,38 @@
+<div class="day-card {% if day.date == today %}is-today{% endif %}" id="day-{{ day.index }}">
+  <div class="day-header">
+    <span class="day-name">{{ day.name }}</span>
+    <span class="day-date">{{ day.date.strftime('%b %d') }}</span>
+  </div>
+
+  <div class="day-thumb-wrap">
+    {% if day.recipe and day.recipe.photo_filename %}
+    <img src="/static/uploads/{{ day.recipe.photo_filename }}"
+         class="day-thumb" alt="{{ day.recipe.name }}">
+    {% else %}
+    <div class="day-thumb-placeholder">🍽️</div>
+    {% endif %}
+  </div>
+
+  <div class="day-body">
+    {% if day.recipe %}
+    <a href="/recipes/{{ day.recipe.id }}" class="day-recipe-link">{{ day.recipe.name }}</a>
+    {% else %}
+    <span class="no-meal">No meal planned</span>
+    {% endif %}
+
+    <select class="day-select"
+            name="recipe_id"
+            hx-post="/planner/{{ week_str }}/{{ day.index }}"
+            hx-target="#day-{{ day.index }}"
+            hx-swap="outerHTML"
+            hx-trigger="change">
+      <option value="">— Choose meal —</option>
+      {% for recipe in recipes %}
+      <option value="{{ recipe.id }}"
+              {% if day.recipe_id == recipe.id %}selected{% endif %}>
+        {{ recipe.name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+</div>

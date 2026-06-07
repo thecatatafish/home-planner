@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% set active = "recipes" %}
+
+{% block title %}{% if recipe %}Edit {{ recipe.name }}{% else %}Add Recipe{% endif %} — Home Planner{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem">
+  <a href="{% if recipe %}/recipes/{{ recipe.id }}{% else %}/recipes{% endif %}" class="btn btn-ghost btn-sm">← Back</a>
+</div>
+
+<div class="page-header">
+  <h1>{% if recipe %}Edit Recipe{% else %}New Recipe{% endif %}</h1>
+</div>
+
+<div class="form-card">
+  <form method="post"
+        action="{% if recipe %}/recipes/{{ recipe.id }}/edit{% else %}/recipes{% endif %}"
+        enctype="multipart/form-data">
+
+    <div class="form-group">
+      <label for="name">Recipe name *</label>
+      <input type="text" id="name" name="name" required
+             value="{{ recipe.name if recipe else '' }}"
+             placeholder="e.g. Spaghetti Bolognese">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description"
+                placeholder="A short description or cooking notes…">{{ recipe.description if recipe else '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="photo">Photo</label>
+      {% if recipe and recipe.photo_filename %}
+      <div style="margin-bottom:0.5rem">
+        <img src="/static/uploads/{{ recipe.photo_filename }}" style="max-width:200px; border-radius:var(--radius); border:1px solid var(--border)">
+        <p class="form-hint">Upload a new photo to replace the current one.</p>
+      </div>
+      {% endif %}
+      <input type="file" id="photo" name="photo" accept="image/*"
+             onchange="previewPhoto(this)">
+      <img id="photo-preview" class="photo-preview" src="" alt="Preview">
+    </div>
+
+    <div class="form-group">
+      <label>Ingredients</label>
+      <div class="ingredients-header">
+        <span>Name</span>
+        <span>Amount</span>
+        <span>Unit</span>
+        <span></span>
+      </div>
+      <div id="ingredients-container">
+        {% if ingredients %}
+          {% for ing in ingredients %}
+          <div class="ingredient-row">
+            <div class="autocomplete-wrap">
+              <input type="text" name="ingredient_name" value="{{ ing.name }}" placeholder="e.g. Chicken breast"
+                     autocomplete="off"
+                     hx-get="/htmx/ingredient-suggestions"
+                     hx-trigger="input changed delay:200ms"
+                     hx-target="next .suggestions-dropdown"
+                     hx-swap="innerHTML"
+                     hx-params="none"
+                     hx-on:htmx:config-request="event.detail.parameters['q'] = event.detail.elt.value">
+              <div class="suggestions-dropdown"></div>
+            </div>
+            <input type="text" name="ingredient_quantity" value="{{ ing.quantity }}" placeholder="500">
+            <input type="text" name="ingredient_unit" value="{{ ing.unit }}" placeholder="g">
+            <button type="button" class="btn-remove" onclick="this.closest('.ingredient-row').remove()" title="Remove">×</button>
+          </div>
+          {% endfor %}
+        {% else %}
+          {% include "partials/ingredient_row.html" %}
+        {% endif %}
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" style="margin-top:0.5rem"
+              hx-get="/htmx/ingredient-row"
+              hx-target="#ingredients-container"
+              hx-swap="beforeend">
+        + Add ingredient
+      </button>
+    </div>
+
+    <div style="display:flex; gap:0.75rem; margin-top:1.5rem">
+      <button type="submit" class="btn btn-primary">
+        {% if recipe %}Save changes{% else %}Add recipe{% endif %}
+      </button>
+      <a href="{% if recipe %}/recipes/{{ recipe.id }}{% else %}/recipes{% endif %}" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+function previewPhoto(input) {
+  const preview = document.getElementById('photo-preview');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function selectIngredient(el) {
+  const wrap = el.closest('.autocomplete-wrap');
+  wrap.querySelector('input[name="ingredient_name"]').value = el.textContent.trim();
+  wrap.querySelector('.suggestions-dropdown').innerHTML = '';
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.autocomplete-wrap')) {
+    document.querySelectorAll('.suggestions-dropdown').forEach(d => d.innerHTML = '');
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% set active = "recipes" %}
+
+{% block title %}{{ recipe.name }} — Home Planner{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem">
+  <a href="/recipes" class="btn btn-ghost btn-sm">← Back to recipes</a>
+</div>
+
+<div class="recipe-detail">
+  <div>
+    {% if recipe.photo_filename %}
+    <img src="/static/uploads/{{ recipe.photo_filename }}" class="recipe-photo" alt="{{ recipe.name }}">
+    {% else %}
+    <div class="recipe-photo-placeholder">🍽️</div>
+    {% endif %}
+  </div>
+
+  <div class="recipe-info">
+    <h1>{{ recipe.name }}</h1>
+
+    {% if recipe.description %}
+    <p class="recipe-description">{{ recipe.description }}</p>
+    {% endif %}
+
+    {% if ingredients %}
+    <h3 style="font-size:1rem; margin-bottom:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; font-size:0.8rem">
+      Ingredients
+    </h3>
+    <ul class="ingredients-list">
+      {% for ing in ingredients %}
+      <li class="ingredient-item">
+        <span class="ingredient-qty">
+          {% if ing.quantity %}{{ ing.quantity }}{% endif %}
+          {% if ing.unit %} {{ ing.unit }}{% endif %}
+        </span>
+        <span>{{ ing.name }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p style="color:var(--text-muted); font-style:italic; font-size:0.9rem">No ingredients listed.</p>
+    {% endif %}
+
+    <div class="recipe-actions">
+      <a href="/recipes/{{ recipe.id }}/edit" class="btn btn-ghost">Edit</a>
+      <form method="post" action="/recipes/{{ recipe.id }}/delete"
+            onsubmit="return confirm('Delete this recipe? This cannot be undone.')">
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+<div class="ingredient-row">
+  <div class="autocomplete-wrap">
+    <input type="text" name="ingredient_name" placeholder="e.g. Chicken breast"
+           autocomplete="off"
+           hx-get="/htmx/ingredient-suggestions"
+           hx-trigger="input changed delay:200ms"
+           hx-target="next .suggestions-dropdown"
+           hx-swap="innerHTML"
+           hx-params="none"
+           hx-on:htmx:config-request="event.detail.parameters['q'] = event.detail.elt.value">
+    <div class="suggestions-dropdown"></div>
+  </div>
+  <input type="text" name="ingredient_quantity" placeholder="500">
+  <input type="text" name="ingredient_unit" placeholder="g">
+  <button type="button" class="btn-remove" onclick="this.closest('.ingredient-row').remove()" title="Remove">×</button>
+</div>

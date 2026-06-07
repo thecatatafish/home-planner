@@ -1,0 +1,1 @@
+- [Use UV for dependencies](feedback_uv.md) — never use pip; use uv add / uv run / uv sync

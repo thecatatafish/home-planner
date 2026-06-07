@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% set active = "planner" %}
+
+{% block title %}Week Planner — Home Planner{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Week Planner</h1>
+  <a href="/shopping-list?week={{ week_str }}" class="btn btn-primary">View shopping list →</a>
+</div>
+
+<div class="week-nav">
+  <a href="/planner?week={{ prev_week }}" class="btn btn-ghost btn-sm">← Prev week</a>
+  <h2>
+    {{ week_start.strftime('%B %d') }} – {{ week_end.strftime('%B %d, %Y') }}
+  </h2>
+  <a href="/planner?week={{ next_week }}" class="btn btn-ghost btn-sm">Next week →</a>
+</div>
+
+{% if not recipes %}
+<div class="empty-state">
+  <div class="empty-icon">🥣</div>
+  <p>Add some recipes first, then come back to plan your week.</p>
+  <a href="/recipes/new" class="btn btn-primary">+ Add Recipe</a>
+</div>
+{% else %}
+<div class="week-grid">
+  {% for day in days %}
+  {% include "partials/day_slot.html" %}
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
