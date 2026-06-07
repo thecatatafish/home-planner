@@ -1,13 +1,18 @@
+import io
 import uuid
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Optional
 
 from fastapi import HTTPException, UploadFile
+from PIL import Image
 from sqlmodel import Session, select
 
 from config import settings
 from models import Ingredient, Recipe
+
+_MAX_DIMENSION = 1920
+_JPEG_QUALITY = 85
 
 DAY_NAMES = [
     "Monday",
@@ -48,6 +53,20 @@ def get_week_start(week_str: Optional[str] = None) -> date:
     return today - timedelta(days=today.weekday())
 
 
+def _compress(content: bytes, ext: str) -> tuple[bytes, str]:
+    """Return (compressed_bytes, new_ext). GIFs are returned unchanged."""
+    if ext == ".gif":
+        return content, ext
+    img = Image.open(io.BytesIO(content))
+    if img.mode not in ("RGB", "L"):
+        img = img.convert("RGB")
+    if max(img.size) > _MAX_DIMENSION:
+        img.thumbnail((_MAX_DIMENSION, _MAX_DIMENSION), Image.LANCZOS)
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=_JPEG_QUALITY, optimize=True)
+    return buf.getvalue(), ".jpg"
+
+
 async def save_photo(upload: Optional[UploadFile]) -> Optional[str]:
     if not upload or not upload.filename:
         return None
@@ -59,6 +78,7 @@ async def save_photo(upload: Optional[UploadFile]) -> Optional[str]:
         raise HTTPException(
             status_code=413, detail=f"Photo exceeds {settings.max_upload_mb} MB limit"
         )
+    content, ext = _compress(content, ext)
     filename = f"{uuid.uuid4()}{ext}"
     (settings.upload_dir / filename).write_bytes(content)
     return filename
