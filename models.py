@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import Column, ForeignKey, Integer, UniqueConstraint
@@ -10,7 +10,7 @@ class Recipe(SQLModel, table=True):
     name: str
     description: str = Field(default="")
     photo_filename: Optional[str] = Field(default=None)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class Ingredient(SQLModel, table=True):

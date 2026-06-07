@@ -56,6 +56,10 @@ async def set_day_plan(
 ):
     if not 0 <= day <= 6:
         raise HTTPException(status_code=400, detail="Invalid day")
+    try:
+        week_start = date.fromisoformat(week_str)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid week")
 
     if recipe_id and recipe_id != "0":
         session.exec(
@@ -77,7 +81,6 @@ async def set_day_plan(
 
     session.commit()
 
-    week_start = date.fromisoformat(week_str)
     plan_map = {day: int(recipe_id)} if recipe_id and recipe_id != "0" else {}
     recipes = session.exec(select(Recipe).order_by(Recipe.name)).all()
 

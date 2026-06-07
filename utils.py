@@ -54,7 +54,7 @@ async def save_photo(upload: Optional[UploadFile]) -> Optional[str]:
     ext = Path(upload.filename).suffix.lower()
     if ext not in _ALLOWED_EXTENSIONS:
         return None
-    content = await upload.read()
+    content = await upload.read(settings.max_upload_bytes + 1)
     if len(content) > settings.max_upload_bytes:
         raise HTTPException(
             status_code=413, detail=f"Photo exceeds {settings.max_upload_mb} MB limit"
