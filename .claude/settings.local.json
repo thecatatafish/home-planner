@@ -16,7 +16,8 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:8000/recipes/new\")",
       "Bash(curl -s \"http://localhost:8000/htmx/ingredient-suggestions?q=chi\")",
       "Bash(curl *)",
-      "Bash(kill %2)"
+      "Bash(kill %2)",
+      "Bash(git *)"
     ]
   }
 }

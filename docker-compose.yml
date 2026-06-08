@@ -6,5 +6,5 @@ services:
     ports:
       - "9091:9091"
     volumes:
-      - /Users/bjarnthoregilsson/planner.db:/app/planner.db
+      - /opt/home-planner/planner.db:/app/planner.db
     restart: unless-stopped
