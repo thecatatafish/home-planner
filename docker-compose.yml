@@ -4,7 +4,7 @@ services:
 #    env_file:
 #      - .env
     ports:
-      - "9091:9091"
+      - "9092:9092"
     volumes:
       - /opt/home-planner/planner.db:/app/planner.db
     restart: unless-stopped

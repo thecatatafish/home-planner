@@ -5,4 +5,4 @@ ADD . /app
 WORKDIR /app
 RUN uv sync --locked
 
-CMD [ "uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9091" ]
+CMD [ "uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9092" ]
