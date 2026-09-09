@@ -7,4 +7,5 @@ services:
       - "9092:9092"
     volumes:
       - /opt/home-planner/planner.db:/app/planner.db
+      - /opt/home-planner/uploads:/app/static/uploads
     restart: unless-stopped
